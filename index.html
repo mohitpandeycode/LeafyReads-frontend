@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Book</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="actionbtns">
+       <div id="myAlert" class="alert-container">
+        <span class="alert-message">
+            Press "F" to enter fullscreen mode for batter experience.
+        </span>
+        <button class="alert-close-btn" aria-label="Close alert">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </button>
+    </div>
+    <button id="fullscreenBtn" class="control-button fullscreen-button" title="Toggle Fullscreen">⛶</button>
+    <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 70px; padding: 8px"
+      title="Toggle Dark Mode">🌙</button>
+    <button id="muteBtn" class="control-button fullscreen-button" style="top: 120px; padding: 8px"
+      title="Mute/Unmute Audio">🔊</button>
+  </div>
+
+  <main id="container-wrapper">
+    <button id="prevBtn" class="nav-button prev" aria-label="Previous">
+      <span class="icon">&larr;</span>
+    </button>
+
+    <section id="container">
+      <div id="spine-illusion" hidden></div>
+
+      <div class="flipbook">
+        <article class="page cover" style="border: 2px solid white;">
+          <img src="cover.jpg" alt="Cover Image" class="cover-image" />
+        </article>
+
+        <article class="page">
+          <div class="pagestyle">
+            <p>
+              Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste
+              delectus dignissimos itaque vero amet deleniti quos deserunt facere dolorum earum.
+            </p>
+          </div>
+        </article>
+
+        <article class="page">
+          <div class="pagestyle">
+            <p>
+              Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor, sit amet consectetur adipisicing elit. At
+              eos ullam placeat! Quibusdam dolorem a est. Deserunt eum sed quos laudantium, atque repellat. Accusantium
+              vitae deserunt, debitis ipsum eveniet exercitationem laudantium fugiat nulla, quidem possimus magni, iste
+              tenetur. Enim eveniet eaque fugiat eligendi et neque autem beatae molestias nam ab, ducimus maxime error
+              quas architecto maiores! Omnis placeat voluptatibus cupiditate, magnam labore dolor quidem ullam obcaecati
+              doloremque fugiat. Architecto repudiandae ipsa autem vel dignissimos asperiores.
+            </p>
+            <h3>So here I am</h3>
+            <p>what happend to you</p>
+          </div>
+        </article>
+
+        <article class="page">
+          <img src="page3.jpg" alt="Page 3" />
+        </article>
+
+        <article class="page">
+          <img src="page4.jpg" alt="Page 4" />
+        </article>
+
+        <article class="page cover" style="border: 2px solid white;">
+          <img src="backcover.jpg" alt="Back Cover Image" class="cover-image" />
+        </article>
+      </div>
+    </section>
+
+    <button id="nextBtn" class="nav-button next" aria-label="Next">
+      <span class="icon">&rarr;</span>
+    </button>
+  </main>
+
+  <div id="progress-bar-container" aria-label="Page Progress">
+    <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+  </div>
+
+  <audio id="flipForward" src="flip1.mp3" preload="auto" aria-hidden="true"></audio>
+  <audio id="flipBackward" src="flip2.mp3" preload="auto" aria-hidden="true"></audio>
+
+  <script src="jquery.min.js"></script>
+  <script src="turn.min.js"></script>
+  <script>
+    $(function () {
+      const $flipbook = $('.flipbook');
+      const $spine = $('#spine-illusion');
+      const flipForward = document.getElementById("flipForward");
+      const flipBackward = document.getElementById("flipBackward");
+      const fullscreenBtn = document.getElementById("fullscreenBtn");
+      const darkModeBtn = document.getElementById("darkModeBtn");
+      const muteBtn = document.getElementById("muteBtn");
+
+      let lastPage = 1;
+      let isMuted = false;
+
+      $flipbook.turn({
+        width: 1300,
+        height: 750,
+        autoCenter: true,
+        elevation: 50,
+        gradients: true,
+        when: {
+          turning(event, page) {
+            if (!isMuted) {
+              if (page > lastPage) {
+                flipForward.currentTime = 0;
+                flipForward.play();
+              } else if (page < lastPage) {
+                flipBackward.currentTime = 0;
+                flipBackward.play();
+              }
+            }
+            lastPage = page;
+          },
+          turned(e, page) {
+            const totalPages = $flipbook.turn('pages');
+            $spine.toggle(page > 1 && page < totalPages);
+
+            const progressPercent = (page / totalPages) * 100;
+            const progressBar = document.getElementById("progress-bar");
+            progressBar.style.width = `${progressPercent}%`;
+            progressBar.setAttribute("aria-valuenow", progressPercent.toFixed(0));
+          }
+        }
+      });
+
+      $('#prevBtn').click(() => $flipbook.turn('previous'));
+      $('#nextBtn').click(() => $flipbook.turn('next'));
+
+      $(document).keydown(e => {
+        switch (e.key) {
+          case "ArrowRight":
+            $flipbook.turn('next');
+            break;
+          case "ArrowLeft":
+            $flipbook.turn('previous');
+            break;
+          case "f":
+          case "F":
+            toggleFullscreen();
+            break;
+          case "d":
+          case "D":
+            toggleDarkMode();
+            break;
+          case "m":
+          case "M":
+            toggleMute();
+            break;
+        }
+      });
+
+      fullscreenBtn?.addEventListener("click", toggleFullscreen);
+      darkModeBtn?.addEventListener("click", toggleDarkMode);
+      muteBtn?.addEventListener("click", toggleMute);
+
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => alert(`Error: ${err.message}`));
+          fullscreenBtn.innerText = "🗗";
+        } else {
+          document.exitFullscreen();
+          fullscreenBtn.innerText = "⛶";
+        }
+      }
+
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        document.documentElement.classList.toggle("dark-mode");
+        darkModeBtn.innerText = darkModeBtn.innerText === "🌙" ? "☀️" : "🌙";
+      }
+
+      function toggleMute() {
+        isMuted = !isMuted;
+        flipForward.muted = isMuted;
+        flipBackward.muted = isMuted;
+        muteBtn.innerText = isMuted ? "🔇" : "🔊";
+      }
+    });
+
+ const myAlert = document.getElementById('myAlert');
+        const closeButton = myAlert.querySelector('.alert-close-btn');
+
+        function hideAlert() {
+            myAlert.classList.add('alert-hide');
+            myAlert.addEventListener('transitionend', () => {
+                if (myAlert.classList.contains('alert-hide')) {
+                    myAlert.remove();
+                }
+            }, { once: true });
+        }
+
+        closeButton.addEventListener('click', hideAlert);
+  </script>
+</body>
+
+</html>

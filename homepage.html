@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeafyReads - Your Digital Bookshelf</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --color-primary: #3B82F6;
+            --color-primary-hover: #2563EB;
+            --color-bg: #F8F7F4;
+            --color-text-dark: #1a1a1a;
+            --color-text-medium: #4B5563;
+            --color-text-light: #6B7280;
+            --color-white: #ffffff;
+            --color-border: #E5E7EB;
+            --color-header-bg: rgba(255, 255, 255, 0.8);
+            --color-card-bg: #F9FAFB;
+            --color-card-border: #F3F4F6;
+            --color-logo-dark: #1F2937;
+            --color-hero-heading: #111827;
+        }
+        body.dark-mode {
+            --color-primary: #60A5FA;
+            --color-primary-hover: #3B82F6;
+            --color-bg: #1A202C;
+            --color-text-dark: #E2E8F0;
+            --color-text-medium: #A0AEC0;
+            --color-text-light: #718096;
+            --color-white: #1A202C;
+            --color-border: #2D3748;
+            --color-header-bg: rgba(26, 32, 44, 0.8);
+            --color-card-bg: #2D3748;
+            --color-card-border: #4A5568;
+            --color-logo-dark: #E2E8F0;
+            --color-hero-heading: #E2E8F0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        .container {
+            width: 95%;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        .header {
+            background-color: var(--color-header-bg);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid var(--color-border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo span {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--color-logo-dark);
+            transition: color 0.3s ease;
+        }
+        .logo i {
+            color: var(--color-primary);
+            transition: color 0.3s ease;
+        }
+        .desktop-nav {
+            display: none;
+            align-items: center;
+            gap: 2rem;
+        }
+        .desktop-nav a {
+            color: var(--color-text-light);
+            transition: color 0.3s ease;
+        }
+        .desktop-nav a:hover { color: var(--color-primary); }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .header-actions .login-btn {
+            display: none;
+            color: var(--color-text-light);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .header-actions .login-btn:hover { color: var(--color-primary); }
+        .theme-toggle-btn {
+            background-color: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-medium);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            line-height: 1;
+        }
+        .theme-toggle-btn:hover {
+            background-color: var(--color-border);
+            color: var(--color-text-dark);
+            transform: translateY(-2px);
+        }
+        .theme-toggle-btn i {
+            width: 1.25rem;
+            height: 1.25rem;
+            transition: color 0.3s ease;
+        }
+        .btn {
+            display: inline-block;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .primary-btn {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+        .primary-btn:hover {
+            background-color: var(--color-primary-hover);
+            transform: translateY(-2px);
+        }
+        .secondary-btn {
+            background-color: var(--color-white);
+            color: #374151;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        body.dark-mode .secondary-btn { color: var(--color-text-dark); }
+        .secondary-btn:hover { background-color: #F9FAFB; transform: translateY(-2px); }
+        body.dark-mode .secondary-btn:hover { background-color: #374151; }
+        .header-actions .primary-btn { padding: 0.625rem 1.25rem; }
+        section { padding: 5rem 0; }
+        .hero-bg {
+            background-color: var(--color-bg);
+            background-image: radial-gradient(circle at 10% 20%, rgba(136, 176, 224, 0.1), transparent 30%), radial-gradient(circle at 90% 80%, rgba(224, 136, 176, 0.1), transparent 30%);
+            text-align: center;
+            transition: background-color 0.3s ease;
+            animation: heroBgPulse 8s infinite alternate ease-in-out;
+        }
+        .hero-bg h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--color-hero-heading);
+            transition: color 0.3s ease;
+        }
+        .hero-bg p {
+            max-width: 48rem;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1.125rem;
+            color: var(--color-text-medium);
+            margin-bottom: 2.5rem;
+            transition: color 0.3s ease;
+        }
+        .hero-search-form {
+            max-width: 42rem;
+            margin: 0 auto;
+            display: flex;
+            background-color: var(--color-white);
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            border: 1px solid var(--color-border);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.dark-mode .hero-search-form {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+        }
+        .hero-search-form input {
+            width: 100%;
+            border: none;
+            outline: none;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            background-color: transparent;
+            color: var(--color-text-medium);
+            transition: color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hero-search-form input::placeholder { color: var(--color-text-light); }
+        .hero-search-form input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .hero-search-form .btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            white-space: nowrap;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .section-header h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--color-logo-dark);
+            transition: color 0.3s ease;
+        }
+        .section-header p {
+            font-size: 1.125rem;
+            color: var(--color-text-light);
+            margin-top: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        .bg-white {
+            background-color: var(--color-white);
+            transition: background-color 0.3s ease;
+        }
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        .book-item img {
+            width: 100%;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            aspect-ratio: 2 / 3;
+            object-fit: cover;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.dark-mode .book-item img {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+        }
+        .book-item img:hover {
+            transform: scale(1.05) translateY(-8px) rotateZ(1deg);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15), 0 8px 10px -6px rgb(0 0 0 / 0.15);
+        }
+        body.dark-mode .book-item img:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+        }
+        .book-item h3 {
+            margin-top: 0.75rem;
+            font-weight: 600;
+            color: var(--color-logo-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color 0.3s ease;
+        }
+        .book-item p {
+            font-size: 0.875rem;
+            color: var(--color-text-light);
+            transition: color 0.3s ease;
+        }
+        .features-grid {
+            display: grid;
+            gap: 3rem;
+        }
+        .feature-item { text-align: center; }
+        .feature-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        }
+        .feature-icon.bg-blue { background-color: #DBEAFE; color: #3B82F6; }
+        .feature-icon.bg-green { background-color: #D1FAE5; color: #10B981; }
+        .feature-icon.bg-purple { background-color: #E9D5FF; color: #9333EA; }
+        body.dark-mode .feature-icon.bg-blue { background-color: #1E3A8A; color: #60A5FA; }
+        body.dark-mode .feature-icon.bg-green { background-color: #065F46; color: #34D399; }
+        body.dark-mode .feature-icon.bg-purple { background-color: #581C87; color: #C084FC; }
+        .feature-icon:hover { transform: scale(1.1); }
+        .feature-icon i { width: 2rem; height: 2rem; }
+        .feature-item h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--color-logo-dark);
+            transition: color 0.3s ease;
+        }
+   /* Category Card Hover Effect */
+        .books-category-grid .category-card {
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+            transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+        }
+        .books-category-grid .category-card:hover {
+            background: var(--color-primary);
+            color: var(--color-white);
+            box-shadow: 0 8px 24px 0 rgb(59 130 246 / 0.15);
+            transform: translateY(-6px) scale(1.04);
+        }
+        .books-category-grid .category-card:hover i {
+            color: var(--color-white) !important;
+        }
+        
+
+        .feature-item p { color: var(--color-text-medium); transition: color 0.3s ease; }
+        .testimonials-grid {
+            display: grid;
+            gap: 2rem;
+            max-width: 56rem;
+            margin: 0 auto;
+        }
+        .testimonial-card {
+            background-color: var(--color-card-bg);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--color-card-border);
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+        }
+        .testimonial-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        }
+        body.dark-mode .testimonial-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.12);
+        }
+        .testimonial-card>p {
+            color: var(--color-text-medium);
+            margin-bottom: 1.5rem;
+            transition: color 0.3s ease;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        .testimonial-author img {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
+            margin-right: 1rem;
+            object-fit: cover;
+        }
+        .author-name {
+            font-weight: 600;
+            color: var(--color-logo-dark);
+            transition: color 0.3s ease;
+        }
+        .author-title {
+            color: var(--color-text-light);
+            transition: color 0.3s ease;
+        }
+        .footer {
+            background-color: #1F2937;
+            color: var(--color-white);
+            transition: color 0.3s ease;
+        }
+        body.dark-mode .footer { background-color: #111827; }
+        .footer-content { padding: 3rem 0; }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        .footer-about { grid-column: span 2 / span 2; }
+        .footer h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--color-text-dark);
+            transition: color 0.3s ease;
+        }
+        .footer ul li { margin-bottom: 0.75rem; }
+        .footer a { color: #9CA3AF; transition: color 0.3s ease; }
+        .footer a:hover { color: var(--color-white); }
+        .footer-socials { display: flex; gap: 1rem; }
+        .footer-copyright {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            text-align: center;
+            color: #9CA3AF;
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+        body.dark-mode .footer-copyright {
+            border-color: #4A5568;
+            color: #718096;
+        }
+        @keyframes heroBgPulse {
+            0% {
+                background-image: radial-gradient(circle at 10% 20%, rgba(136, 176, 224, 0.1), transparent 30%), radial-gradient(circle at 90% 80%, rgba(224, 136, 176, 0.1), transparent 30%);
+            }
+            50% {
+                background-image: radial-gradient(circle at 15% 25%, rgba(136, 176, 224, 0.15), transparent 35%), radial-gradient(circle at 85% 75%, rgba(224, 136, 176, 0.15), transparent 35%);
+            }
+            100% {
+                background-image: radial-gradient(circle at 10% 20%, rgba(136, 176, 224, 0.1), transparent 30%), radial-gradient(circle at 90% 80%, rgba(224, 136, 176, 0.1), transparent 30%);
+            }
+        }
+        body.dark-mode .hero-bg {
+            background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05), transparent 30%), radial-gradient(circle at 90% 80%, rgba(147, 51, 234, 0.05), transparent 30%);
+        }
+        /* Removed invalid: body.dark-mode @keyframes heroBgPulse {...} */
+        .theme-toggle-btn i {
+            transform-origin: center center;
+            transition: transform 0.4s ease-out;
+        }
+        .theme-toggle-btn.toggled i { transform: rotate(360deg); }
+        @media (min-width: 640px) {
+            .header-actions .login-btn { display: inline; }
+            .books-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 768px) {
+            .desktop-nav { display: flex; }
+            .hero-bg { padding: 8rem 0; }
+            .hero-bg h1 { font-size: 3.75rem; }
+            .hero-bg p { font-size: 1.25rem; }
+            .section-header h2 { font-size: 2.25rem; }
+            .books-grid { grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+            .features-grid { grid-template-columns: repeat(3, 1fr); }
+            .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: repeat(4, 1fr); }
+            .footer-about { grid-column: span 1 / span 1; }
+        }
+        @media (min-width: 1024px) {
+            .books-grid { grid-template-columns: repeat(6, 1fr); }
+            .footer-grid { grid-template-columns: repeat(5, 1fr); }
+            .footer-about { grid-column: span 1 / span 1; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <i data-lucide="book-open"></i>
+                    <span>LeafyReads</span>
+                </a>
+                <nav class="desktop-nav">
+                    <a href="#">Features</a>
+                    <a href="#">Pricing</a>
+                    <a href="#">Community</a>
+                </nav>
+                <div class="header-actions">
+                    <button id="theme-toggle" class="theme-toggle-btn">
+                        <i data-lucide="sun"></i>
+                    </button>
+                    <a href="#" class="login-btn">Log In</a>
+                    <a href="#" class="btn primary-btn">
+                        Start Reading Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section class="hero-bg">
+            <div class="container">
+                <h1>Dive into Your Next Favorite Book</h1>
+                <p>LeafyReads is your personal reading sanctuary. Discover thousands of books, track your progress, and
+                    connect with a community of fellow readers.</p>
+                <form class="hero-search-form" onsubmit="event.preventDefault();">
+                    <input type="text" placeholder="Search for books, authors, or genres...">
+                    <button type="submit" class="btn primary-btn">
+                        <i data-lucide="search" style="width:1rem; height:1rem;"></i>
+                        <span>Search</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+        <section class="bg-white">
+            <div class="container">
+                <div class="section-header">
+                    <h2>New & Trending Reads</h2>
+                    <p>Handpicked selections just for you.</p>
+                </div>
+                <div class="books-grid">
+                    <div class="book-item">
+                        <img src="https://placehold.co/400x600/3B82F6/FFFFFF?text=The+Mind's+Maze" alt="Book Cover 1"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';">
+                        <h3>The Mind's Maze</h3>
+                        <p>Alexandre Dusk</p>
+                    </div>
+                    <div class="book-item">
+                        <img src="https://placehold.co/400x600/10B981/FFFFFF?text=Echoes+of+Jade" alt="Book Cover 2"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';">
+                        <h3>Echoes of Jade</h3>
+                        <p>Lila Chen</p>
+                    </div>
+                    <div class="book-item">
+                        <img src="https://placehold.co/400x600/F97316/FFFFFF?text=Starlight+Protocol" alt="Book Cover 3"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';">
+                        <h3>Starlight Protocol</h3>
+                        <p>Kenji Tanaka</p>
+                    </div>
+                    <div class="book-item">
+                        <img src="https://placehold.co/400x600/8B5CF6/FFFFFF?text=The+Last+Lighthouse"
+                            alt="Book Cover 4"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';">
+                        <h3>The Last Lighthouse</h3>
+                        <p>Eleanor Vance</p>
+                    </div>
+                    <div class="book-item">
+                        <img src="https://placehold.co/400x600/EC4899/FFFFFF?text=City+of+Whispers" alt="Book Cover 5"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';">
+                        <h3>City of Whispers</h3>
+                        <p>Marcus Finch</p>
+                    </div>
+                    <div class="book-item">
+                        <img src="https://placehold.co/400x600/6366F1/FFFFFF?text=Beneath+a+Paper+Sky"
+                            alt="Book Cover 6"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';">
+                        <h3>Beneath a Paper Sky</h3>
+                        <p>Sarah Jones</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+           <section>
+        <div class="container">
+            <div class="section-header">
+                <h2>Browse by Category</h2>
+                <p>Explore books by your favorite genres and topics.</p>
+            </div>
+            <div class="books-category-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+                    <i data-lucide="book" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+                    <div>Fiction</div>
+                </a>
+                <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+                    <i data-lucide="globe" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+                    <div>Non-Fiction</div>
+                </a>
+                <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+                    <i data-lucide="feather" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+                    <div>Poetry</div>
+                </a>
+                <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+                    <i data-lucide="star" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+                    <div>Fantasy</div>
+                </a>
+                <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+                    <i data-lucide="heart" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+                    <div>Romance</div>
+                </a>
+                <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+                    <i data-lucide="cpu" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+                    <div>Science Fiction</div>
+                </a>
+                <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+                    <i data-lucide="user" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+                    <div>Biography</div>
+                </a>
+                <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+                    <i data-lucide="book-open" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+                    <div>Classics</div>
+                </a>
+            </div>
+        </div>
+    </section>
+        <section>
+            <div class="container">
+                <div class="section-header">
+                    <h2>Everything You Need to Read More</h2>
+                    <p>All the tools to enhance your reading experience.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon bg-blue"><i data-lucide="library"></i></div>
+                        <h3>Vast Digital Library</h3>
+                        <p>Access thousands of titles from every genre imaginable, from timeless classics to modern
+                            bestsellers.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon bg-green"><i data-lucide="bar-chart-3"></i></div>
+                        <h3>Track Your Progress</h3>
+                        <p>Set reading goals, log your reading sessions, and watch your virtual bookshelf grow over
+                            time.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon bg-purple"><i data-lucide="highlighter"></i></div>
+                        <h3>Notes & Highlights</h3>
+                        <p>Capture your thoughts and favorite passages directly in the book. Never lose a great idea
+                            again.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="bg-white">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Loved by Readers Everywhere</h2>
+                </div>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <p>"LeafyReads has completely changed how I read. I've discovered so many new authors and the
+                            progress tracking keeps me motivated. It's a must-have for any book lover!"</p>
+                        <div class="testimonial-author">
+                            <img src="https://i.pravatar.cc/150?img=1" alt="Avatar of Sarah K.">
+                            <div>
+                                <p class="author-name">Sarah K.</p>
+                                <p class="author-title">Avid Reader</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"Finally, a beautiful and functional app for my reading life. Joining the book club
+                            discussions has been amazing. It feels like a real community."</p>
+                        <div class="testimonial-author">
+                            <img src="https://i.pravatar.cc/150?img=2" alt="Avatar of Michael B.">
+                            <div>
+                                <p class="author-name">Michael B.</p>
+                                <p class="author-title">Book Club Organizer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo" style="margin-bottom: 1rem;">
+                        <i data-lucide="book-open" style="color: var(--color-primary)"></i>
+                        <span style="color: var(--color-white)">LeafyReads</span>
+                    </div>
+                    <p style="color: #9CA3AF;">Your digital reading sanctuary.</p>
+                </div>
+                <div>
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Updates</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Privacy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Follow Us</h4>
+                    <div class="footer-socials">
+                        <a href="#"><i data-lucide="twitter"></i></a>
+                        <a href="#"><i data-lucide="instagram"></i></a>
+                        <a href="#"><i data-lucide="facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2024 LeafyReads. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+    <script>
+        lucide.createIcons();
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const body = document.body;
+        const setTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggleBtn.innerHTML = '<i data-lucide="moon"></i>';
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggleBtn.innerHTML = '<i data-lucide="sun"></i>';
+            }
+            themeToggleBtn.classList.toggle('toggled', theme === 'dark');
+            lucide.createIcons();
+        };
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else {
+            setTheme('light');
+        }
+        themeToggleBtn.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                setTheme('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                setTheme('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+</body>
+</html>
